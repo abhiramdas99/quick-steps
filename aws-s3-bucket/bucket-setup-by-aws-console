@@ -1,0 +1,89 @@
+standard bucket setup :
+=========================
+	Properties :
+		(A) Bucket Versioning : 
+			Bucket versioning : disabled 
+			multifactor authenticatilon : disabled 
+			
+		(B) Tag:
+			key : environment_type
+			value: staging 
+		
+		(C) Default Encryption: 
+			Encryption type : server-side encyption with Amazon S3 managed keys(sse-s3) 
+			Bucket key : enabled 
+			
+		(D) Intelligent-Tiering archive configurations: 
+			[keep empty]
+		
+		(E) server access logining : 
+			disabled
+			
+		(F) Aws cloudTrail data events:
+			[keep empty]
+			
+		(G) enent Notifickations:
+			[Keep empty]
+		
+		(H) Amazon Event Bridge:
+			[keep off]
+			
+		(I) Transfer acceleration
+			[disabled]
+			
+		(j) Object Lock 
+			disabled
+			
+		(k) Requester pays:
+			disabled
+		
+		(l) static website hosting: 
+			static website hosting : enabled
+			host type : byucket hosting 
+			Bucket website endpint :
+				http://<bucket_name>.s3-website-<region-name>.amazonaws.com
+				
+	Permissions:
+		(A) Block all public access : Off
+		(B) Bucket policy : 
+			{
+				"Version": "2012-10-17",
+				"Statement": [
+					{
+						"Sid": "AllowPublicRead",
+						"Effect": "Allow",
+						"Principal": "*",
+						"Action": "s3:GetObject",
+						"Resource": "arn:aws:s3:::mindset-production-media/*"
+					}
+				]
+			}
+			
+		(C) Object Onwership: 
+			 Acls Enabled 
+			 Bucket onwer preferred
+			 
+		(D) Access Control List (ACL):
+			Grantee : 
+				Bucket onwer(your aws cccount)
+					Allow:
+						Objects: List ,Write 
+						Bucket ACL : Read , Write 
+					Not Allow:
+						NA
+						
+				EveryOne(public access):
+					Group: Global user / Authenticated users/ s3 log delivery group 
+						Allowed : NA
+					Not Allowed :
+						List , Write 
+		
+		(E) CORS(Cross-rogin resource sharing) 
+			[empty]
+			
+		
+		
+		
+		
+				
+		
