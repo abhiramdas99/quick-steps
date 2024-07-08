@@ -1,0 +1,152 @@
+########################################################################################
+# nodejs-ecs-farget 
+########################################################################################
+
+# Backend repository structure:
+
+	sample-nodejs-backend-app/
+	├── Dockerfile
+	├── docker-compose.yml
+	├── package.json
+	├── package-lock.json
+	└── server.js
+
+# Frontend repository structure:
+
+	simple-website-frontend/
+	├── Dockerfile
+	├── docker-compose.yml
+	├── package.json
+	└── src/
+		├── index.js
+		├── App.js
+		└── App.css
+	
+	
+# Ready the  Backend 
+	 1. run the command : 
+		npm init -y //to create package.json file 
+	 2. replace the package.json content with below content: 
+		{
+			"name": "sample-nodejs-backend-app",
+			"version": "1.0.0",
+			"description": "A simple website using Node.js and MariaDB with Docker",
+			"main": "server.js",
+			"scripts": {
+				"start": "node server.js"
+			},
+			"dependencies": {
+				"express": "^4.17.1",
+				"mysql2": "^2.2.5"
+			}
+		}
+
+	3. Create the server.js file: 
+		const express = require('express');
+		const mysql = require('mysql2');
+		
+		const app = express();
+		const port = 3000;
+		
+		const db = mysql.createConnection({
+		host: process.env.DB_HOST,
+		user: process.env.DB_USER,
+		password: process.env.DB_PASSWORD,
+		database: process.env.DB_NAME
+		});
+		
+		db.connect((err) => {
+		if (err) {
+			console.error('Error connecting to the database:', err);
+			return;
+		}
+		console.log('Connected to the MariaDB database.');
+		});
+		
+		app.get('/', (req, res) => {
+		res.send('Hello, World!');
+		});
+		
+		app.listen(port, () => {
+		console.log(`Server is running on http://localhost:${port}`);
+		});
+	
+	4. create .env file: 
+		DB_HOST=db
+		DB_USER=testuser
+		DB_PASSWORD=testpassword
+		DB_NAME=testdb
+
+	5. Create the Dockerfile for the backend:
+
+		FROM node:14
+		
+		# Create app directory
+		WORKDIR /usr/src/app
+		
+		# Install app dependencies
+		COPY package*.json ./
+		
+		RUN npm install
+		
+		# Bundle app source
+		COPY . .
+		
+		EXPOSE 3000
+		
+		CMD ["npm", "start"]
+
+	6. Create the docker-compose.yml file:
+	
+       version: '3.8'
+       
+       services:
+         db:
+           image: mariadb:latest
+           restart: always
+           environment:
+             MYSQL_ROOT_PASSWORD: rootpassword
+             MYSQL_DATABASE: testdb
+             MYSQL_USER: testuser
+             MYSQL_PASSWORD: testpassword
+           ports:
+           - "3306:3306"
+           volumes:
+           - db_data:/var/lib/mysql
+       
+         backend:
+           build: ./backend
+           ports:
+             - "3000:3000"
+           environment:
+             DB_HOST: db
+             DB_USER: testuser
+             DB_PASSWORD: testpassword
+             DB_NAME: testdb
+           depends_on:
+             - db
+       volumes:
+         db_data:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
